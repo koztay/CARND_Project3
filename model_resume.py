@@ -75,49 +75,13 @@ train_generator = generator(train_samples, batch_size=32)
 validation_generator = generator(validation_samples, batch_size=32)
 
 
-from keras.models import Sequential
-from keras.layers import (Flatten, Dense, Dropout,
-                          Lambda, Activation,
-                          Convolution2D, Cropping2D, MaxPooling2D)
-from keras.layers.normalization import BatchNormalization
 from keras.callbacks import ModelCheckpoint
+from keras.models import load_model
 
-# Here I am using the NVIDIA Architecture
-model = Sequential()
-# trim image to only see section with region of interest
-model.add(Cropping2D(cropping=((70, 25), (0, 0)), input_shape=(160, 320, 3)))  # height, width, channels
-model.add(Lambda(lambda x: x/255.0 - 0.5))  # Normalize the images
-model.add(Convolution2D(24, 5, 5, activation='relu', subsample=(2, 2), name="first_conv"))  # subsample = strides
+# model = Sequential()
+model = load_model('weights.best.h5')
 
-model.add(Convolution2D(36, 5, 5, activation='relu', subsample=(2, 2), name="second_conv"))
-# model.add(BatchNormalization())
-# model.add(Activation('relu'))
-model.add(Convolution2D(48, 5, 5, activation='relu', subsample=(2, 2),  name="third_conv"))
-# model.add(BatchNormalization())
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Convolution2D(64, 3, 3, activation='relu', name="fourth_conv"))
-# model.add(BatchNormalization())
-# model.add(Activation('relu'))
-# model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Convolution2D(64, 2, 2, activation='relu', name="fifth_conv"))
-# model.add(BatchNormalization())
-# model.add(Activation('relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Flatten())
-model.add(Dense(100, activation='relu'))
-model.add(Dropout(.5))
-model.add(Dense(20, activation='relu'))
-model.add(Dropout(.25))
-model.add(Dense(10))
-model.add(Dense(1))
-
-
-model.compile(loss='mse', optimizer='adam')
-print(model.summary())
-
-#
-# checkpoint
+# # # # checkpoint
 filepath = "weights.best.h5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
