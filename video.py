@@ -1,6 +1,6 @@
-import imageio
-imageio.plugins.ffmpeg.download()
-
+# import imageio
+# imageio.plugins.ffmpeg.download()
+# importing once is enough the above lines.
 from moviepy.editor import ImageSequenceClip
 import argparse
 
